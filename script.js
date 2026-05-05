@@ -451,13 +451,39 @@
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             var btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<span>Message Sent! ✓</span>';
-            btn.style.background = 'linear-gradient(135deg, #c96b8a, #f4a34d)';
-            setTimeout(function () {
-                btn.innerHTML = '<span>Send Message</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
-                btn.style.background = '';
-                form.reset();
-            }, 3000);
+            var originalHtml = '<span>Send Message</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+            
+            btn.innerHTML = '<span>Sending...</span>';
+            
+            var data = new FormData(form);
+            fetch(form.action, {
+                method: form.method,
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    btn.innerHTML = '<span>Message Sent! ✓</span>';
+                    btn.style.background = 'linear-gradient(135deg, #c96b8a, #f4a34d)';
+                    form.reset();
+                } else {
+                    response.json().then(data => {
+                        if (Object.hasOwn(data, 'errors')) {
+                            btn.innerHTML = '<span>Error Sending</span>';
+                        } else {
+                            btn.innerHTML = '<span>Oops! Problem.</span>';
+                        }
+                    });
+                }
+            }).catch(error => {
+                btn.innerHTML = '<span>Oops! Problem.</span>';
+            }).finally(() => {
+                setTimeout(function () {
+                    btn.innerHTML = originalHtml;
+                    btn.style.background = '';
+                }, 3000);
+            });
         });
     }
 })();
