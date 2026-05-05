@@ -2,6 +2,29 @@
 (function () {
     'use strict';
 
+    // ========== INTRO SCREEN UNLOCK ==========
+    var introScreen = document.getElementById('introScreen');
+    var isIntroLocked = true;
+
+    function unlockIntro(e) {
+        if (!isIntroLocked) return;
+        isIntroLocked = false;
+        
+        introScreen.classList.add('leaving');
+        document.body.classList.remove('no-scroll');
+        
+        setTimeout(() => {
+            introScreen.classList.add('hidden');
+        }, 1200); // Wait for CSS transition
+        
+        // Remove event listeners
+        window.removeEventListener('click', unlockIntro);
+    }
+
+    if (introScreen) {
+        window.addEventListener('click', unlockIntro, { once: true });
+    }
+
     // ---- SCENE SETUP ----
     const canvas = document.getElementById('heroCanvas');
     const scene = new THREE.Scene();

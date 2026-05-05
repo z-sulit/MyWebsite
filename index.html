@@ -21,7 +21,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="no-scroll">
+    <!-- Intro Screen -->
+    <div id="introScreen" class="intro-screen">
+        <img src="images/Sulit_logo.png" alt="Zachary Sulit Logo" class="intro-logo">
+        <p class="intro-scroll-hint">Click to enter</p>
+    </div>
     <!-- Custom Cursor -->
     <div class="cursor-dot" id="cursorDot"></div>
     <div class="cursor-ring" id="cursorRing"></div>
@@ -133,6 +138,23 @@
                         <span class="hud-corner hud-tl"></span>
                         <span class="hud-corner hud-br"></span>
                         <div class="project-number">01</div>
+                        <h3 class="project-title">DOST-PHIVOLCS Epicenter Estimation <span style="font-size: 0.8em; color: var(--amber); font-style: italic;">(Ongoing)</span></h3>
+                        <p class="project-desc">Engineered synthetic data pipelines and automated web-scraping scripts for real-time earthquake data. Optimized backend infrastructure using NestJS and Prisma for future ML epicenter models.</p>
+                        <div class="project-tags">
+                            <span class="tag">Data Scraping</span>
+                            <span class="tag">Data Cleaning</span>
+                            <span class="tag">Data Analysis</span>
+                            <span class="tag">Machine Learning</span>
+                            <span class="tag">NestJS & Prisma</span>
+                        </div>
+                        <span class="project-link" style="color: var(--text-secondary); cursor: default;">Ongoing Collaboration</span>
+                    </div>
+                </div>
+                <div class="reveal reveal-left" style="--reveal-delay: 0.1s">
+                    <div class="project-card" id="project-2">
+                        <span class="hud-corner hud-tl"></span>
+                        <span class="hud-corner hud-br"></span>
+                        <div class="project-number">02</div>
                         <h3 class="project-title">F1 Pit Stop Optimization: RL</h3>
                         <p class="project-desc">Trained a Q-Learning agent to determine optimal pit stop timing and tire
                             compound selection using real 2023 Italian Grand Prix telemetry data, with a custom
@@ -146,11 +168,11 @@
                             class="project-link" target="_blank" rel="noopener noreferrer">View Project →</a>
                     </div>
                 </div>
-                <div class="reveal reveal-left" style="--reveal-delay: 0.1s">
-                    <div class="project-card" id="project-2">
+                <div class="reveal reveal-right" style="--reveal-delay: 0.2s">
+                    <div class="project-card" id="project-3">
                         <span class="hud-corner hud-tl"></span>
                         <span class="hud-corner hud-br"></span>
-                        <div class="project-number">02</div>
+                        <div class="project-number">03</div>
                         <h3 class="project-title">F1 Pit Stop Optimization: DP</h3>
                         <p class="project-desc">Engineered a data-driven strategy solver to compute optimal Formula 1
                             pit stop windows from real race telemetry using polynomial degradation models and Dynamic
@@ -164,11 +186,11 @@
                             class="project-link" target="_blank" rel="noopener noreferrer">View Project →</a>
                     </div>
                 </div>
-                <div class="reveal reveal-right" style="--reveal-delay: 0.2s">
-                    <div class="project-card" id="project-3">
+                <div class="reveal reveal-left" style="--reveal-delay: 0.3s">
+                    <div class="project-card" id="project-4">
                         <span class="hud-corner hud-tl"></span>
                         <span class="hud-corner hud-br"></span>
-                        <div class="project-number">03</div>
+                        <div class="project-number">04</div>
                         <h3 class="project-title">Predicting F1 Finishing Tiers</h3>
                         <p class="project-desc">Built a multinomial logistic regression model to classify 2023 Grand
                             Prix drivers into finishing tiers using lap-level race data and Leave-One-Grand-Prix-Out
@@ -182,11 +204,11 @@
                             class="project-link" target="_blank" rel="noopener noreferrer">View Project →</a>
                     </div>
                 </div>
-                <div class="reveal reveal-left" style="--reveal-delay: 0.3s">
-                    <div class="project-card" id="project-4">
+                <div class="reveal reveal-right" style="--reveal-delay: 0.4s">
+                    <div class="project-card" id="project-5">
                         <span class="hud-corner hud-tl"></span>
                         <span class="hud-corner hud-br"></span>
-                        <div class="project-number">04</div>
+                        <div class="project-number">05</div>
                         <h3 class="project-title">Dashboard Dumps</h3>
                         <p class="project-desc">A collection of data visualization dashboards and exploratory analytics
                             projects built across coursework and personal work, serving as a visual storytelling

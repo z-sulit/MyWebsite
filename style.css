@@ -42,6 +42,64 @@ body {
 a { color: var(--amber); text-decoration: none; transition: color 0.3s; }
 a:hover { color: var(--soft-gold); }
 
+/* ========== INTRO SCREEN ========== */
+body.no-scroll {
+    overflow: hidden;
+}
+.intro-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: linear-gradient(170deg, var(--bg-deep-1) 0%, var(--bg-deep-2) 100%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s;
+    cursor: pointer;
+}
+.intro-logo {
+    width: 280px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(244, 163, 77, 0.2));
+    animation: introFloat 4s ease-in-out infinite;
+    transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s;
+}
+.intro-scroll-hint {
+    position: absolute;
+    bottom: 12%;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    animation: introPulse 2s infinite;
+    transition: opacity 0.5s;
+}
+@keyframes introFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+@keyframes introPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* When unlocked via scroll */
+.intro-screen.leaving .intro-logo {
+    transform: scale(4) translateY(-10px);
+    opacity: 0;
+}
+.intro-screen.leaving .intro-scroll-hint {
+    opacity: 0;
+}
+.intro-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
 /* ========== CUSTOM CURSOR ========== */
 .cursor-dot {
     position: fixed;
