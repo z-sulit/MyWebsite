@@ -118,13 +118,14 @@ a:hover ~ .cursor-dot, button:hover ~ .cursor-dot { transform: scale(2); }
     pointer-events: none;
 }
 .nav-brand {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--text-primary);
-    letter-spacing: -1px;
+    display: flex;
+    align-items: center;
 }
-.brand-dot { color: var(--amber); }
+.brand-logo {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+}
 .nav-links { display: flex; gap: 2rem; }
 .nav-links a {
     font-family: var(--font-mono);
@@ -485,14 +486,10 @@ a:hover ~ .cursor-dot, button:hover ~ .cursor-dot { transform: scale(2); }
     background: linear-gradient(135deg, rgba(244, 163, 77, 0.1), rgba(201, 107, 138, 0.1));
     margin: 0 auto;
 }
-.photo-placeholder {
-    font-family: var(--font-display);
-    font-size: 5rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--amber), var(--dusty-rose));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 .photo-glow {
     position: absolute;
