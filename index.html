@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zach | Data Science Portfolio</title>
+    <meta name="description" content="Portfolio of Zach — a Data Science student turning raw data into clarity. Explore projects in ML, NLP, data visualization, and analytics.">
+    <meta name="keywords" content="data science, machine learning, portfolio, Zach, analytics, python, NLP">
+    <meta name="author" content="Zach">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay" aria-hidden="true"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#hero" class="nav-brand">Z<span class="brand-dot">.</span></a>
+        <div class="nav-links" id="navLinks">
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#skills">Skills</a>
+            <a href="#resume">Resume</a>
+            <a href="#contact">Contact</a>
+            <span class="nav-indicator" id="navIndicator"></span>
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="hero">
+        <canvas id="heroCanvas"></canvas>
+        
+        <!-- F1 HUD Readouts -->
+        <div class="hero-hud hud-top-left">SYS<br><span class="hud-highlight">ONLINE</span></div>
+        <div class="hero-hud hud-top-right">SEC 1<br><span class="hud-highlight purple">PURPLE</span></div>
+        <div class="hero-hud hud-bottom-left">TYRE<br><span class="hud-highlight" style="color:#ef4444">SOFT</span></div>
+        <div class="hero-hud hud-bottom-right">MODE<br><span class="hud-highlight">PUSH</span></div>
+        
+        <div class="hero-content">
+            <span class="hero-bracket top-left"></span>
+            <span class="hero-bracket top-right"></span>
+            <span class="hero-bracket bottom-left"></span>
+            <span class="hero-bracket bottom-right"></span>
+            
+            <p class="hero-greeting"><span class="blink-dot"></span>Hello, I'm</p>
+            <h1 class="hero-name">Zach</h1>
+            <div class="hero-divider"></div>
+            <p class="hero-subtitle">Data Science Student</p>
+            <p class="hero-tagline">Turning raw data into clarity.</p>
+            <a href="#projects" class="cta-button" id="ctaButton">
+                <span>View My Work</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+            </a>
+        </div>
+        <div class="scroll-indicator" id="scrollIndicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">01 / About</span>
+                <h2>About Me</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-photo reveal">
+                    <div class="photo-frame">
+                        <div class="photo-placeholder">Z</div>
+                    </div>
+                    <div class="photo-glow"></div>
+                </div>
+                <div class="about-text reveal">
+                    <p class="about-lead">A data enthusiast with a passion for uncovering stories hidden in numbers.</p>
+                    <p>I'm a Data Science student driven by curiosity and a love for turning complex datasets into meaningful insights. From predictive modeling to natural language processing, I thrive at the intersection of statistics, programming, and visual storytelling.</p>
+                    <p>When I'm not training models or wrangling data, you'll find me exploring Formula 1 analytics, experimenting with visualization tools, or diving into the latest research papers on deep learning architectures.</p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="stat-number">15+</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">5+</span>
+                            <span class="stat-label">Tools</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">3+</span>
+                            <span class="stat-label">Years Coding</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== PROJECTS ===================== -->
+    <section class="section" id="projects">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">02 / Work</span>
+                <h2>Projects</h2>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card reveal reveal-right" id="project-1" style="--reveal-delay: 0s">
+                    <span class="hud-corner hud-tl"></span>
+                    <span class="hud-corner hud-br"></span>
+                    <div class="project-number">01</div>
+                    <h3 class="project-title">F1 Race Predictor</h3>
+                    <p class="project-desc">Machine learning model predicting Formula 1 race finishing positions using historical telemetry, weather, and qualifying data.</p>
+                    <div class="project-tags">
+                        <span class="tag">Machine Learning</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">F1 Analytics</span>
+                    </div>
+                    <a href="#" class="project-link">View Project →</a>
+                </div>
+                <div class="project-card reveal reveal-left" id="project-2" style="--reveal-delay: 0.1s">
+                    <span class="hud-corner hud-tl"></span>
+                    <span class="hud-corner hud-br"></span>
+                    <div class="project-number">02</div>
+                    <h3 class="project-title">Sentiment Analyzer</h3>
+                    <p class="project-desc">Deep learning NLP pipeline for real-time sentiment analysis of social media posts using transformer architectures.</p>
+                    <div class="project-tags">
+                        <span class="tag">NLP</span>
+                        <span class="tag">Deep Learning</span>
+                        <span class="tag">PyTorch</span>
+                    </div>
+                    <a href="#" class="project-link">View Project →</a>
+                </div>
+                <div class="project-card reveal reveal-right" id="project-3" style="--reveal-delay: 0.2s">
+                    <span class="hud-corner hud-tl"></span>
+                    <span class="hud-corner hud-br"></span>
+                    <div class="project-number">03</div>
+                    <h3 class="project-title">Churn Prediction</h3>
+                    <p class="project-desc">End-to-end ML pipeline predicting customer churn with 94% accuracy using ensemble methods and feature engineering.</p>
+                    <div class="project-tags">
+                        <span class="tag">Scikit-learn</span>
+                        <span class="tag">ML Pipeline</span>
+                        <span class="tag">Analytics</span>
+                    </div>
+                    <a href="#" class="project-link">View Project →</a>
+                </div>
+                <div class="project-card reveal reveal-left" id="project-4" style="--reveal-delay: 0.3s">
+                    <span class="hud-corner hud-tl"></span>
+                    <span class="hud-corner hud-br"></span>
+                    <div class="project-number">04</div>
+                    <h3 class="project-title">COVID-19 Dashboard</h3>
+                    <p class="project-desc">Interactive data visualization dashboard tracking pandemic trends with real-time data feeds and geospatial mapping.</p>
+                    <div class="project-tags">
+                        <span class="tag">Data Viz</span>
+                        <span class="tag">Power BI</span>
+                        <span class="tag">API</span>
+                    </div>
+                    <a href="#" class="project-link">View Project →</a>
+                </div>
+                <div class="project-card reveal reveal-right" id="project-5" style="--reveal-delay: 0.4s">
+                    <span class="hud-corner hud-tl"></span>
+                    <span class="hud-corner hud-br"></span>
+                    <div class="project-number">05</div>
+                    <h3 class="project-title">Stock Forecaster</h3>
+                    <p class="project-desc">LSTM-based time series model for stock price prediction with attention mechanisms and multi-step forecasting.</p>
+                    <div class="project-tags">
+                        <span class="tag">Time Series</span>
+                        <span class="tag">LSTM</span>
+                        <span class="tag">TensorFlow</span>
+                    </div>
+                    <a href="#" class="project-link">View Project →</a>
+                </div>
+                <div class="project-card reveal reveal-left" id="project-6" style="--reveal-delay: 0.5s">
+                    <span class="hud-corner hud-tl"></span>
+                    <span class="hud-corner hud-br"></span>
+                    <div class="project-number">06</div>
+                    <h3 class="project-title">Social Pulse</h3>
+                    <p class="project-desc">Analytics platform mining social media APIs to discover trending topics and audience engagement patterns.</p>
+                    <div class="project-tags">
+                        <span class="tag">NLP</span>
+                        <span class="tag">API</span>
+                        <span class="tag">Visualization</span>
+                    </div>
+                    <a href="#" class="project-link">View Project →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Telemetry Curve Divider -->
+    <div class="telemetry-divider">
+        <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,30 Q100,5 200,30 T400,30 T600,25 T800,35 T1000,28 T1200,30" fill="none" stroke="#f4a34d" stroke-width="1.5" />
+            <path d="M0,35 Q150,50 300,35 T600,38 T900,30 T1200,35" fill="none" stroke="#c96b8a" stroke-width="1" opacity="0.6" />
+        </svg>
+    </div>
+
+    <!-- ===================== SKILLS ===================== -->
+    <section class="section" id="skills">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">03 / Skills</span>
+                <h2>Tech Stack</h2>
+            </div>
+            <div class="skills-content reveal">
+                <!-- Marquee -->
+                <div class="marquee">
+                    <div class="marquee-track">
+                        <span>Python</span><span>·</span><span>TensorFlow</span><span>·</span><span>SQL</span><span>·</span><span>Pandas</span><span>·</span><span>PyTorch</span><span>·</span><span>Power BI</span><span>·</span><span>NumPy</span><span>·</span><span>Jupyter</span><span>·</span><span>Docker</span><span>·</span><span>Matplotlib</span><span>·</span><span>Scikit-learn</span><span>·</span><span>R</span><span>·</span><span>AWS</span><span>·</span>
+                        <span>Python</span><span>·</span><span>TensorFlow</span><span>·</span><span>SQL</span><span>·</span><span>Pandas</span><span>·</span><span>PyTorch</span><span>·</span><span>Power BI</span><span>·</span><span>NumPy</span><span>·</span><span>Jupyter</span><span>·</span><span>Docker</span><span>·</span><span>Matplotlib</span><span>·</span><span>Scikit-learn</span><span>·</span><span>R</span><span>·</span><span>AWS</span><span>·</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3 class="skill-category-title">Languages</h3>
+                    <div class="skill-pills">
+                        <span class="skill-pill" data-level="advanced">Python</span>
+                        <span class="skill-pill" data-level="advanced">SQL</span>
+                        <span class="skill-pill" data-level="intermediate">R</span>
+                        <span class="skill-pill" data-level="intermediate">JavaScript</span>
+                        <span class="skill-pill" data-level="beginner">Julia</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="skill-category-title">ML / AI</h3>
+                    <div class="skill-pills">
+                        <span class="skill-pill" data-level="advanced">TensorFlow</span>
+                        <span class="skill-pill" data-level="advanced">PyTorch</span>
+                        <span class="skill-pill" data-level="advanced">Scikit-learn</span>
+                        <span class="skill-pill" data-level="intermediate">Keras</span>
+                        <span class="skill-pill" data-level="intermediate">XGBoost</span>
+                        <span class="skill-pill" data-level="beginner">Hugging Face</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="skill-category-title">Data & Visualization</h3>
+                    <div class="skill-pills">
+                        <span class="skill-pill" data-level="advanced">Pandas</span>
+                        <span class="skill-pill" data-level="advanced">NumPy</span>
+                        <span class="skill-pill" data-level="advanced">Matplotlib</span>
+                        <span class="skill-pill" data-level="intermediate">Power BI</span>
+                        <span class="skill-pill" data-level="intermediate">Tableau</span>
+                        <span class="skill-pill" data-level="intermediate">Plotly</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="skill-category-title">Tools & DevOps</h3>
+                    <div class="skill-pills">
+                        <span class="skill-pill" data-level="advanced">Git</span>
+                        <span class="skill-pill" data-level="advanced">Jupyter</span>
+                        <span class="skill-pill" data-level="intermediate">Docker</span>
+                        <span class="skill-pill" data-level="intermediate">AWS</span>
+                        <span class="skill-pill" data-level="intermediate">PostgreSQL</span>
+                        <span class="skill-pill" data-level="beginner">Spark</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== RESUME ===================== -->
+    <section class="section" id="resume">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">04 / Experience</span>
+                <h2>Resume</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item reveal" id="timeline-1">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">Summer 2025</span>
+                        <h3 class="timeline-title">Data Science Intern</h3>
+                        <p class="timeline-org">TechCorp Analytics</p>
+                        <p class="timeline-desc">Built automated data pipelines and developed customer segmentation models. Reduced report generation time by 60% through Python automation.</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal" id="timeline-2">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2024 — Present</span>
+                        <h3 class="timeline-title">Research Assistant</h3>
+                        <p class="timeline-org">University Data Science Lab</p>
+                        <p class="timeline-desc">Assisting in research on predictive modeling and statistical analysis. Contributing to published papers on ML applications in sports analytics.</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal" id="timeline-3">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2023</span>
+                        <h3 class="timeline-title">Hackathon Winner — 1st Place</h3>
+                        <p class="timeline-org">DataHack 2023</p>
+                        <p class="timeline-desc">Built a real-time anomaly detection system for network security using isolation forests in a 48-hour data science hackathon.</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal" id="timeline-4">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2022 — 2026</span>
+                        <h3 class="timeline-title">B.S. Data Science</h3>
+                        <p class="timeline-org">University of Analytics</p>
+                        <p class="timeline-desc">Coursework in statistical learning, deep learning, database systems, and data visualization. Dean's List recipient.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="resume-download reveal">
+                <a href="#" class="cta-button" id="downloadCV">
+                    <span>Download CV</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">05 / Contact</span>
+                <h2>Get In Touch</h2>
+            </div>
+            <div class="contact-content">
+                <div class="contact-text reveal">
+                    <p>Have a question, a project idea, or just want to connect? I'd love to hear from you. Drop me a message and I'll get back to you soon.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" id="socialGithub" aria-label="GitHub">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            <span>GitHub</span>
+                        </a>
+                        <a href="#" class="social-link" id="socialLinkedin" aria-label="LinkedIn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            <span>LinkedIn</span>
+                        </a>
+                    </div>
+                </div>
+                <form class="contact-form reveal" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="cta-button submit-btn" id="submitBtn">
+                        <span>Send Message</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Zach. Built with passion and data.</p>
+        </div>
+    </footer>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

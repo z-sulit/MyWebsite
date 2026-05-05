@@ -1,0 +1,182 @@
+# Make the Portfolio Feel Alive — Full Enhancement Plan
+
+The hero Three.js scene is strong. Everything below it needs to match that energy. This plan layers **F1 design DNA**, **scroll-driven animations**, and **ambient motion** across all sections.
+
+## What's Already Built ✅
+
+- Hero with Three.js canvas (polyhedron, graph nodes, scatter clusters, grids, embers)
+- All 6 sections: Hero → About → Projects → Skills → Resume → Contact
+- Color palette & design tokens (amber, burnt-orange, dusty-rose, soft-gold)
+- Typography (Playfair Display + JetBrains Mono)
+- Navbar (frosted glass, hamburger, scroll shrink)
+- Custom cursor (amber dot + ring + hover grow)
+- Basic scroll reveal (fade-up via IntersectionObserver)
+- Noise overlay, scroll parallax on 3D scene
+- Mobile responsive breakpoints
+
+---
+
+## Proposed Changes
+
+### 1. F1 Racing Stripe Dividers
+
+Thin burnt-orange racing stripes between sections — a subtle nod to F1 telemetry aesthetics.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- Add `section + section::before` with a 2px gradient line (amber → burnt-orange → amber)
+- Animated `background-position` shimmer sweep
+
+#### [MODIFY] [index.html](file:///d:/PersonalProjects/PersonalWebsite/index.html)
+- Add a telemetry-curve SVG `<div class="telemetry-divider">` between the Projects and Skills sections — a decorative sine-wave/telemetry line in amber with low opacity
+
+---
+
+### 2. Navbar Active Link — DRS Indicator Underline
+
+The active nav link should have a **sliding amber underline** that moves to whichever section is in view, like a DRS activation indicator.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- Add a `::after` pseudo-element on `.nav-links` that acts as a sliding indicator bar
+- Position/width driven by JS via CSS custom properties (`--indicator-left`, `--indicator-width`)
+- Smooth `transition: left 0.3s, width 0.3s` with amber color
+
+#### [MODIFY] [script.js](file:///d:/PersonalProjects/PersonalWebsite/script.js)
+- Use IntersectionObserver on each `section[id]` to detect which section is active
+- On change: read the corresponding nav link's `offsetLeft` and `offsetWidth` → set CSS custom properties on `.nav-links`
+
+---
+
+### 3. Animated Stat Counters (About section)
+
+"15+", "5+", "3+" count up from 0 on first scroll into view.
+
+#### [MODIFY] [script.js](file:///d:/PersonalProjects/PersonalWebsite/script.js)
+- IntersectionObserver on `.stat-number` elements
+- `requestAnimationFrame` loop with ease-out: count from 0 → target over ~1.5s
+- Append `+` suffix after counting finishes
+
+---
+
+### 4. Staggered Directional Project Card Reveals
+
+Cards alternate slide direction — odd from right, even from left — with staggered timing.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- Add `.reveal-left` (starts `translateX(-60px)`) and `.reveal-right` (starts `translateX(60px)`)
+- Both transition to `translateX(0)` on `.visible`
+- Support `--reveal-delay` custom property for stagger
+
+#### [MODIFY] [index.html](file:///d:/PersonalProjects/PersonalWebsite/index.html)
+- Odd project cards: class `reveal reveal-right`, even: `reveal reveal-left`
+- Inline `style="--reveal-delay: 0s"`, `0.1s`, `0.2s`, etc.
+
+---
+
+### 5. 3D Tilt + Spotlight on Project Cards (hover)
+
+Cards tilt toward the cursor with a glowing spotlight that follows the mouse inside the card.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- `.projects-grid`: add `perspective: 800px`
+- `.project-card`: add `transform-style: preserve-3d`
+- Add `.project-card::after` for the radial gradient spotlight overlay (driven by `--mouse-x`, `--mouse-y` custom properties)
+
+#### [MODIFY] [script.js](file:///d:/PersonalProjects/PersonalWebsite/script.js)
+- `mousemove` on each `.project-card`: compute normalized position relative to card center → set `rotateX(±8°)` and `rotateY(±8°)` + set `--mouse-x` / `--mouse-y`
+- `mouseleave`: animate back to `rotate(0)` with smooth transition
+
+---
+
+### 6. Card Corner Brackets — HUD Overlay Detail
+
+Subtle corner bracket decorations on project cards, referencing F1 onboard HUD overlays.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- Use `.project-card::before` and a new `.project-card .hud-corner` (or repurpose the existing `::before` top gradient bar) to add thin L-shaped bracket corners (top-left, bottom-right) using `border-top + border-left` on pseudo-elements
+- Amber/burnt-orange color, low opacity, slightly brighter on hover
+
+#### [MODIFY] [index.html](file:///d:/PersonalProjects/PersonalWebsite/index.html)
+- Add two `<span class="hud-corner hud-tl"></span><span class="hud-corner hud-br"></span>` inside each `.project-card` (since we need 4 corners and cards already use `::before`)
+
+---
+
+### 7. Skill Tags as Sector Timing Pills
+
+Restyle skill pills to look like F1 sector timing indicators — monospace, compact, with a colored left-edge indicator bar.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- Restyle `.skill-pill` with a left border (3px solid) colored by level:
+  - `advanced` → amber (like S1 purple/fastest)
+  - `intermediate` → dusty-rose (like S2)
+  - `beginner` → muted text-secondary (like S3)
+- More angular border-radius (`4px` instead of `50px`) for that telemetry readout feel
+- Slight inner glow on hover
+
+---
+
+### 8. Self-Drawing Timeline (Resume section)
+
+The timeline line draws itself downward as you scroll through it. Markers pop in with bounce.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- `.timeline::before` starts at `scaleY(0)` with `transform-origin: top`
+- `scaleY` is driven by `var(--timeline-progress, 0)` 
+- `.timeline-marker` starts `scale(0)` and gets `.visible` class to pop in with bounce (`cubic-bezier(0.34, 1.56, 0.64, 1)`)
+- `.timeline-content` cards slide in from left with stagger
+
+#### [MODIFY] [script.js](file:///d:/PersonalProjects/PersonalWebsite/script.js)
+- On `scroll`: calculate how far through the `.timeline` element the viewport is → set `--timeline-progress` (0 to 1) on the `.timeline` element
+- IntersectionObserver on each `.timeline-item` to trigger marker pop-in and card slide-in
+
+---
+
+### 9. Horizontal Tech Marquee (Skills section)
+
+A continuously scrolling strip of tech words above the skill pills, adding visual rhythm.
+
+#### [MODIFY] [index.html](file:///d:/PersonalProjects/PersonalWebsite/index.html)
+- Add `<div class="marquee"><div class="marquee-track">` with content duplicated 2× for seamless looping:
+  ```
+  Python · TensorFlow · SQL · Pandas · PyTorch · Power BI · NumPy · Jupyter · Docker · Matplotlib · Scikit-learn · R · AWS
+  ```
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- `@keyframes marquee` — `translateX(0)` → `translateX(-50%)` over ~25s, infinite, linear
+- `.marquee` has `overflow: hidden` with gradient `mask-image` fading edges
+- Muted amber/gold text, `font-size: 0.75rem`, uppercase, letter-spacing
+
+---
+
+### 10. Floating Ambient Orbs (all sections)
+
+Subtle radial gradient orbs that float slowly behind section content.
+
+#### [MODIFY] [style.css](file:///d:/PersonalProjects/PersonalWebsite/style.css)
+- `.section::before` and `.section::after` — radial gradient circles (amber and rose)
+- Animated with `@keyframes float` (translateY ± 20px + opacity 0.03–0.06 pulse)
+- `pointer-events: none; z-index: 0`
+- Each section's orbs positioned differently via `nth-of-type` selectors
+
+---
+
+## Summary of All Changes by File
+
+| File | Changes |
+|------|---------|
+| **index.html** | Alternate reveal classes on project cards, marquee strip in skills, telemetry SVG divider, HUD corner spans in cards |
+| **style.css** | Racing stripe dividers, DRS indicator underline, reveal-left/right variants, 3D card perspective + spotlight, HUD corner brackets, sector timing pill restyle, timeline draw animation, marquee, floating orbs |
+| **script.js** | Stat counter animation, active nav section tracking (DRS indicator), 3D tilt on cards, timeline scroll progress, stagger reveal timing |
+
+---
+
+## Verification Plan
+
+### Manual Verification
+- Scroll through the full page — confirm every section animates in smoothly
+- Verify stat counters count up exactly once
+- Hover project cards — confirm 3D tilt + spotlight + HUD corners
+- Check marquee scrolls seamlessly with no jump
+- Verify timeline draws itself as you scroll through resume section
+- Check navbar underline slides to active section
+- Test at 375px and 768px — animations shouldn't break layout
+- Verify ambient orbs are subtle (not distracting)
