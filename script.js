@@ -30,6 +30,14 @@
     // ========== SCROLL TELEMETRY ==========
     var telemetryRoot = document.querySelector('.scroll-telemetry');
     var telemetryReadout = document.getElementById('telemetryReadout');
+    var sectionHud = document.getElementById('sectionHud');
+    var velocityHud = document.getElementById('velocityHud');
+    var scrollState = {
+        lastY: window.scrollY,
+        lastT: performance.now(),
+        velocity: 0,
+        easedVelocity: 0
+    };
 
     function getScrollProgress() {
         var maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
@@ -45,6 +53,20 @@
         }
         if (telemetryRoot) {
             telemetryRoot.style.opacity = window.scrollY > 120 ? '1' : '';
+        }
+    }
+
+    function updateScrollVelocity() {
+        var now = performance.now();
+        var dy = window.scrollY - scrollState.lastY;
+        var dt = Math.max(16, now - scrollState.lastT);
+        scrollState.velocity = Math.min(3, Math.abs(dy / dt));
+        scrollState.easedVelocity += (scrollState.velocity - scrollState.easedVelocity) * 0.18;
+        scrollState.lastY = window.scrollY;
+        scrollState.lastT = now;
+        document.documentElement.style.setProperty('--velocity-percent', Math.min(100, scrollState.easedVelocity * 85).toFixed(1) + '%');
+        if (velocityHud) {
+            velocityHud.textContent = scrollState.easedVelocity.toFixed(2);
         }
     }
 
@@ -90,6 +112,112 @@
     const polyGroup = new THREE.Group();
     polyGroup.add(polyWire, polySolid);
     masterGroup.add(polyGroup);
+
+    // ---- 1B. ORBITAL DATA RINGS ----
+    const ringGroup = new THREE.Group();
+    const orbitRings = [];
+    for (let r = 0; r < 4; r++) {
+        const ringGeo = new THREE.TorusGeometry(5.8 + r * 1.45, 0.012 + r * 0.004, 8, 96);
+        const ringMat = new THREE.MeshBasicMaterial({
+            color: r % 2 === 0 ? 0xf4a34d : 0xc96b8a,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.1 - r * 0.012
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.set(r * 0.55, r * 0.38, r * 0.2);
+        ring.userData = { speed: 0.0015 + r * 0.0009, phase: r * 1.3 };
+        orbitRings.push(ring);
+        ringGroup.add(ring);
+    }
+    masterGroup.add(ringGroup);
+
+    // ---- 1C. SCROLL TUNNEL / TELEMETRY TRACK ----
+    const tunnelGroup = new THREE.Group();
+    const tunnelPositions = [];
+    const tunnelDepth = isMobile ? 12 : 20;
+    for (let i = 0; i < tunnelDepth; i++) {
+        const z = -8 - i * 3.2;
+        const scale = 1 + i * 0.08;
+        const halfW = 11 * scale;
+        const halfH = 6 * scale;
+        tunnelPositions.push(
+            -halfW, -halfH, z, halfW, -halfH, z,
+            halfW, -halfH, z, halfW, halfH, z,
+            halfW, halfH, z, -halfW, halfH, z,
+            -halfW, halfH, z, -halfW, -halfH, z
+        );
+        if (i < tunnelDepth - 1) {
+            const nextZ = -8 - (i + 1) * 3.2;
+            const nextScale = 1 + (i + 1) * 0.08;
+            const nextW = 11 * nextScale;
+            const nextH = 6 * nextScale;
+            tunnelPositions.push(
+                -halfW, -halfH, z, -nextW, -nextH, nextZ,
+                halfW, -halfH, z, nextW, -nextH, nextZ,
+                halfW, halfH, z, nextW, nextH, nextZ,
+                -halfW, halfH, z, -nextW, nextH, nextZ
+            );
+        }
+    }
+    const tunnelGeo = new THREE.BufferGeometry();
+    tunnelGeo.setAttribute('position', new THREE.Float32BufferAttribute(tunnelPositions, 3));
+    const tunnelMat = new THREE.LineBasicMaterial({ color: 0xf4a34d, transparent: true, opacity: 0.045 });
+    const tunnelLines = new THREE.LineSegments(tunnelGeo, tunnelMat);
+    tunnelGroup.add(tunnelLines);
+    masterGroup.add(tunnelGroup);
+
+    // ---- 1D. ANALYTICS MODULE BARS ----
+    const analyticsGroup = new THREE.Group();
+    const analyticsBars = [];
+    const barGeo = new THREE.BoxGeometry(0.18, 1, 0.18);
+    const barCount = isMobile ? 18 : 36;
+    for (let i = 0; i < barCount; i++) {
+        const barMat = new THREE.MeshBasicMaterial({
+            color: i % 3 === 0 ? 0xf7c86f : (i % 3 === 1 ? 0xf4a34d : 0xc96b8a),
+            transparent: true,
+            opacity: 0.11
+        });
+        const bar = new THREE.Mesh(barGeo, barMat);
+        const col = i % 12;
+        const row = Math.floor(i / 12);
+        bar.position.set(-8 + col * 1.45, -8.5 + row * 2.2, -12 - row * 2);
+        bar.scale.y = 0.4 + Math.random() * 2.8;
+        bar.userData = { base: bar.scale.y, phase: Math.random() * Math.PI * 2 };
+        analyticsBars.push(bar);
+        analyticsGroup.add(bar);
+    }
+    analyticsGroup.rotation.x = -0.18;
+    masterGroup.add(analyticsGroup);
+
+    // ---- 1E. PROJECT NETWORK CONSTELLATION ----
+    const networkGroup = new THREE.Group();
+    const networkPoints = [];
+    const networkLinePositions = [];
+    const networkNodeCount = isMobile ? 14 : 28;
+    for (let i = 0; i < networkNodeCount; i++) {
+        networkPoints.push(new THREE.Vector3(
+            (Math.random() - 0.5) * 34,
+            (Math.random() - 0.5) * 20,
+            -10 - Math.random() * 28
+        ));
+    }
+    for (let i = 0; i < networkPoints.length; i++) {
+        for (let j = i + 1; j < networkPoints.length; j++) {
+            if (networkPoints[i].distanceTo(networkPoints[j]) < 11) {
+                networkLinePositions.push(
+                    networkPoints[i].x, networkPoints[i].y, networkPoints[i].z,
+                    networkPoints[j].x, networkPoints[j].y, networkPoints[j].z
+                );
+            }
+        }
+    }
+    const networkGeo = new THREE.BufferGeometry();
+    networkGeo.setAttribute('position', new THREE.Float32BufferAttribute(networkLinePositions, 3));
+    const networkMat = new THREE.LineBasicMaterial({ color: 0xc96b8a, transparent: true, opacity: 0.055 });
+    const networkLines = new THREE.LineSegments(networkGeo, networkMat);
+    networkGroup.add(networkLines);
+    masterGroup.add(networkGroup);
 
     // ---- 2. GRAPH NODES + EDGES ----
     const nodeCount = isMobile ? 6 : 10;
@@ -218,6 +346,17 @@
         const progress = getScrollProgress();
 
         if (!prefersReducedMotion) {
+            scrollState.easedVelocity += (0 - scrollState.easedVelocity) * 0.025;
+            document.documentElement.style.setProperty('--velocity-percent', Math.min(100, scrollState.easedVelocity * 85).toFixed(1) + '%');
+            if (velocityHud) {
+                velocityHud.textContent = scrollState.easedVelocity.toFixed(2);
+            }
+
+            const velocityBoost = 1 + scrollState.easedVelocity * 1.8;
+            const projectMood = Math.max(0, 1 - Math.abs(progress - 0.38) / 0.22);
+            const skillsMood = Math.max(0, 1 - Math.abs(progress - 0.58) / 0.18);
+            const resumeMood = Math.max(0, 1 - Math.abs(progress - 0.74) / 0.2);
+
             // Rotate data polyhedron with scroll-reactive depth
             polyGroup.rotation.x = t * 0.08 + progress * 0.55;
             polyGroup.rotation.y = t * 0.12 + progress * 0.8;
@@ -225,6 +364,33 @@
 
             // Pulse polyhedron opacity
             polyWire.material.opacity = 0.26 + Math.sin(t * 0.8) * 0.1 + progress * 0.08;
+
+            // Orbital rings intensify in hero/about and drift as the scroll story progresses
+            ringGroup.rotation.x = t * 0.035 + progress * 0.4;
+            ringGroup.rotation.y = t * 0.05 + progress * 0.9;
+            ringGroup.position.z = -progress * 8;
+            orbitRings.forEach(function (ring, i) {
+                ring.rotation.z += ring.userData.speed * (1 + progress * 2) * velocityBoost;
+                ring.material.opacity = 0.055 + Math.sin(t + ring.userData.phase) * 0.018 + Math.max(0, 0.16 - progress * 0.12);
+            });
+
+            // Scroll tunnel becomes most visible around resume/timeline, like moving through a data corridor
+            tunnelGroup.rotation.z = Math.sin(t * 0.12) * 0.025 + progress * 0.08;
+            tunnelGroup.position.z = (progress * 26 + scrollState.easedVelocity * 6) % 3.2;
+            tunnelMat.opacity = 0.035 + resumeMood * 0.1 + progress * 0.025;
+
+            // Analytics bars pulse around the skills section
+            analyticsGroup.position.y = -progress * 2.5;
+            analyticsGroup.rotation.y = -0.18 + progress * 0.35;
+            analyticsBars.forEach(function (bar, i) {
+                bar.scale.y = Math.max(0.2, bar.userData.base + Math.sin(t * 1.4 + bar.userData.phase + progress * 8) * (0.25 + skillsMood * 0.55));
+                bar.material.opacity = 0.07 + skillsMood * 0.18;
+            });
+
+            // Project network appears denser through the work section
+            networkGroup.rotation.y = t * 0.018 + progress * 0.42;
+            networkGroup.rotation.x = Math.sin(t * 0.22) * 0.04;
+            networkMat.opacity = 0.04 + projectMood * 0.18;
 
             // Bob graph nodes
             nodeMeshes.forEach(function (m, i) {
@@ -236,7 +402,7 @@
             // Drift embers upward
             var pos = emberGeo.attributes.position.array;
             for (var i = 0; i < emberCount; i++) {
-                pos[i * 3 + 1] += emberSpeeds[i] * (1 + progress * 0.7);
+                pos[i * 3 + 1] += emberSpeeds[i] * (1 + progress * 0.7) * velocityBoost;
                 pos[i * 3] += Math.sin(t + i) * 0.003;
                 if (pos[i * 3 + 1] > 25) {
                     pos[i * 3 + 1] = -20;
@@ -315,11 +481,38 @@
     }
 
     // ========== SCROLL REVEAL ==========
+    function scrambleText(el) {
+        if (!el || el.dataset.scrambled === 'true' || prefersReducedMotion) return;
+        el.dataset.scrambled = 'true';
+        var finalText = el.textContent;
+        var chars = '01<>/{}[]#$%&DATA';
+        var frame = 0;
+        var maxFrames = 22;
+        function tick() {
+            var progress = frame / maxFrames;
+            var output = finalText.split('').map(function (char, i) {
+                if (char === ' ') return ' ';
+                if (i / finalText.length < progress) return finalText[i];
+                return chars[Math.floor(Math.random() * chars.length)];
+            }).join('');
+            el.textContent = output;
+            frame++;
+            if (frame <= maxFrames) {
+                requestAnimationFrame(tick);
+            } else {
+                el.textContent = finalText;
+            }
+        }
+        tick();
+    }
+
     var reveals = document.querySelectorAll('.reveal');
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                var heading = entry.target.matches('.section-header') ? entry.target.querySelector('h2') : null;
+                if (heading) scrambleText(heading);
             }
         });
     }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
@@ -379,6 +572,23 @@
         });
         timelineItems.forEach(function (item) {
             item.classList.toggle('active', item === bestItem && bestDistance < window.innerHeight * 0.35);
+        });
+    }
+
+    function updateProjectScrollStage() {
+        if (isMobile || prefersReducedMotion) return;
+        projectCards.forEach(function (card) {
+            if (card.dataset.hovering === 'true') return;
+            var rect = card.getBoundingClientRect();
+            var center = rect.top + rect.height / 2;
+            var distance = Math.abs(center - window.innerHeight * 0.52) / window.innerHeight;
+            var focus = Math.max(0, 1 - distance * 2.2);
+            var lift = -focus * 18;
+            var scale = 1 + focus * 0.018;
+            var rotate = (center - window.innerHeight * 0.52) / window.innerHeight * -3;
+            card.classList.toggle('scroll-focused', focus > 0.5);
+            card.style.setProperty('--card-scroll-glow', focus.toFixed(3));
+            card.style.transform = 'translate3d(0,' + lift.toFixed(2) + 'px,' + (focus * 20).toFixed(2) + 'px) rotateX(' + rotate.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
         });
     }
 
@@ -444,21 +654,43 @@
     }
 
     var activeSection = '';
-    var sectionObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-                var id = entry.target.getAttribute('id');
-                if (id !== 'hero') {
-                    activeSection = id;
-                    updateNavIndicator(id);
-                } else {
-                    // Hide indicator when hero is in view
-                    if (navLinks) navLinks.style.setProperty('--indicator-opacity', '0');
-                }
+
+    function setActiveSection(id) {
+        if (!id || id === activeSection) return;
+        activeSection = id;
+        if (sectionHud) {
+            sectionHud.textContent = id.toUpperCase();
+        }
+        if (id !== 'hero') {
+            updateNavIndicator(id);
+        } else if (navLinks) {
+            navLinks.style.setProperty('--indicator-opacity', '0');
+        }
+    }
+
+    function updateActiveSectionByScroll() {
+        var probeY = window.innerHeight * 0.38;
+        var bestId = 'hero';
+        var bestDistance = Infinity;
+
+        sections.forEach(function (section) {
+            var rect = section.getBoundingClientRect();
+            var id = section.getAttribute('id');
+            var containsProbe = rect.top <= probeY && rect.bottom >= probeY;
+            var sectionCenter = rect.top + rect.height / 2;
+            var distance = Math.abs(sectionCenter - probeY);
+
+            if (containsProbe) {
+                bestId = id;
+                bestDistance = -1;
+            } else if (bestDistance !== -1 && distance < bestDistance) {
+                bestId = id;
+                bestDistance = distance;
             }
         });
-    }, { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' });
-    sections.forEach(function (s) { sectionObserver.observe(s); });
+
+        setActiveSection(bestId);
+    }
 
     // ========== 3D TILT ON PROJECT CARDS ==========
     var projectCards = document.querySelectorAll('.project-card');
@@ -476,6 +708,7 @@
             }
             card.addEventListener('mouseenter', function () {
                 hovering = true;
+                card.dataset.hovering = 'true';
                 requestAnimationFrame(tiltLoop);
             });
             card.addEventListener('mousemove', function (e) {
@@ -491,17 +724,37 @@
             });
             card.addEventListener('mouseleave', function () {
                 hovering = false;
+                card.dataset.hovering = 'false';
                 targetX = 0;
                 targetY = 0;
                 card.style.transform = '';
                 card.style.setProperty('--mouse-x', '50%');
                 card.style.setProperty('--mouse-y', '50%');
+                updateProjectScrollStage();
+            });
+        });
+    }
+
+    // ========== MAGNETIC MICRO-INTERACTIONS ==========
+    if (!isMobile && !prefersReducedMotion) {
+        document.querySelectorAll('.cta-button, .social-link').forEach(function (el) {
+            el.addEventListener('mousemove', function (e) {
+                var rect = el.getBoundingClientRect();
+                var x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+                var y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+                el.style.setProperty('--magnet-x', (x * 10).toFixed(2) + 'px');
+                el.style.setProperty('--magnet-y', (y * 8).toFixed(2) + 'px');
+            });
+            el.addEventListener('mouseleave', function () {
+                el.style.setProperty('--magnet-x', '0px');
+                el.style.setProperty('--magnet-y', '0px');
             });
         });
     }
 
     // ========== SCROLL EFFECTS ==========
     window.addEventListener('scroll', function () {
+        updateScrollVelocity();
         if (window.scrollY > 80) {
             navbar.classList.add('scrolled');
         } else {
@@ -516,12 +769,16 @@
         updateTimelineProgress();
         updateSectionDepth();
         updateActiveTimelineItem();
+        updateProjectScrollStage();
+        updateActiveSectionByScroll();
     }, { passive: true });
     // Initial call
     updateScrollTelemetry();
     updateTimelineProgress();
     updateSectionDepth();
     updateActiveTimelineItem();
+    updateProjectScrollStage();
+    updateActiveSectionByScroll();
 
     // Hamburger menu
     if (hamburger && navLinks) {
