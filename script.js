@@ -2,6 +2,8 @@
 (function () {
     'use strict';
 
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // ========== INTRO SCREEN UNLOCK ==========
     var introScreen = document.getElementById('introScreen');
     var isIntroLocked = true;
@@ -23,6 +25,27 @@
 
     if (introScreen) {
         window.addEventListener('click', unlockIntro, { once: true });
+    }
+
+    // ========== SCROLL TELEMETRY ==========
+    var telemetryRoot = document.querySelector('.scroll-telemetry');
+    var telemetryReadout = document.getElementById('telemetryReadout');
+
+    function getScrollProgress() {
+        var maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        return Math.min(1, Math.max(0, window.scrollY / maxScroll));
+    }
+
+    function updateScrollTelemetry() {
+        var progress = getScrollProgress();
+        document.documentElement.style.setProperty('--scroll-progress', progress.toFixed(4));
+        document.documentElement.style.setProperty('--scroll-progress-percent', (progress * 100).toFixed(2) + '%');
+        if (telemetryReadout) {
+            telemetryReadout.textContent = String(Math.round(progress * 100)).padStart(2, '0') + '%';
+        }
+        if (telemetryRoot) {
+            telemetryRoot.style.opacity = window.scrollY > 120 ? '1' : '';
+        }
     }
 
     // ---- SCENE SETUP ----
@@ -188,55 +211,63 @@
     // ---- ANIMATION LOOP ----
     const clock = new THREE.Clock();
     function animate() {
-        requestAnimationFrame(animate);
-        const t = clock.getElapsedTime();
-
-        // Rotate data polyhedron
-        polyGroup.rotation.x = t * 0.08;
-        polyGroup.rotation.y = t * 0.12;
-
-        // Pulse polyhedron opacity
-        polyWire.material.opacity = 0.3 + Math.sin(t * 0.8) * 0.1;
-
-        // Bob graph nodes
-        nodeMeshes.forEach(function (m, i) {
-            m.position.y += Math.sin(t * 0.5 + i) * 0.003;
-            m.rotation.x = t * 0.3 + i;
-        });
-
-        // Drift embers upward
-        var pos = emberGeo.attributes.position.array;
-        for (var i = 0; i < emberCount; i++) {
-            pos[i * 3 + 1] += emberSpeeds[i];
-            pos[i * 3] += Math.sin(t + i) * 0.003;
-            if (pos[i * 3 + 1] > 25) {
-                pos[i * 3 + 1] = -20;
-                pos[i * 3] = (Math.random() - 0.5) * 50;
-                pos[i * 3 + 2] = (Math.random() - 0.5) * 30;
-            }
+        if (!prefersReducedMotion) {
+            requestAnimationFrame(animate);
         }
-        emberGeo.attributes.position.needsUpdate = true;
+        const t = clock.getElapsedTime();
+        const progress = getScrollProgress();
 
-        // Rotate grids
-        masterGroup.children.forEach(function (c) {
-            if (c.userData && c.userData.rotSpeed) {
-                c.rotation.z += c.userData.rotSpeed;
+        if (!prefersReducedMotion) {
+            // Rotate data polyhedron with scroll-reactive depth
+            polyGroup.rotation.x = t * 0.08 + progress * 0.55;
+            polyGroup.rotation.y = t * 0.12 + progress * 0.8;
+            polyGroup.scale.setScalar(1 + Math.sin(progress * Math.PI) * 0.18);
+
+            // Pulse polyhedron opacity
+            polyWire.material.opacity = 0.26 + Math.sin(t * 0.8) * 0.1 + progress * 0.08;
+
+            // Bob graph nodes
+            nodeMeshes.forEach(function (m, i) {
+                m.position.y += Math.sin(t * 0.5 + i) * 0.003;
+                m.rotation.x = t * 0.3 + i;
+                m.scale.setScalar(1 + Math.sin(t + i + progress * 4) * 0.08);
+            });
+
+            // Drift embers upward
+            var pos = emberGeo.attributes.position.array;
+            for (var i = 0; i < emberCount; i++) {
+                pos[i * 3 + 1] += emberSpeeds[i] * (1 + progress * 0.7);
+                pos[i * 3] += Math.sin(t + i) * 0.003;
+                if (pos[i * 3 + 1] > 25) {
+                    pos[i * 3 + 1] = -20;
+                    pos[i * 3] = (Math.random() - 0.5) * 50;
+                    pos[i * 3 + 2] = (Math.random() - 0.5) * 30;
+                }
             }
-        });
+            emberGeo.attributes.position.needsUpdate = true;
 
-        // Mouse parallax (lerp)
-        mouse.x += (mouse.tx - mouse.x) * 0.05;
-        mouse.y += (mouse.ty - mouse.y) * 0.05;
-        masterGroup.rotation.y = mouse.x * 0.15;
-        masterGroup.rotation.x = mouse.y * 0.1;
+            // Rotate grids
+            masterGroup.children.forEach(function (c) {
+                if (c.userData && c.userData.rotSpeed) {
+                    c.rotation.z += c.userData.rotSpeed * (1 + progress);
+                }
+            });
 
-        // Scroll parallax (lerp)
-        scrollParallax.current += (scrollParallax.target - scrollParallax.current) * 0.05;
-        masterGroup.position.y = scrollParallax.current;
+            // Mouse parallax (lerp)
+            mouse.x += (mouse.tx - mouse.x) * 0.05;
+            mouse.y += (mouse.ty - mouse.y) * 0.05;
+            masterGroup.rotation.y = mouse.x * 0.15 + progress * 0.12;
+            masterGroup.rotation.x = mouse.y * 0.1 - progress * 0.08;
 
-        // Subtle light movement
-        light1.position.x = 15 + Math.sin(t * 0.3) * 3;
-        light2.position.y = -10 + Math.cos(t * 0.4) * 3;
+            // Scroll parallax (lerp)
+            scrollParallax.current += (scrollParallax.target - scrollParallax.current) * 0.05;
+            masterGroup.position.y = scrollParallax.current;
+            masterGroup.position.z = -progress * 4;
+
+            // Subtle light movement
+            light1.position.x = 15 + Math.sin(t * 0.3) * 3;
+            light2.position.y = -10 + Math.cos(t * 0.4) * 3;
+        }
 
         renderer.render(scene, camera);
     }
@@ -321,6 +352,36 @@
         timeline.style.setProperty('--timeline-progress', progress);
     }
 
+    // ========== SCROLL DEPTH + ACTIVE STORYTELLING ==========
+    function updateSectionDepth() {
+        if (isMobile || prefersReducedMotion) return;
+        document.querySelectorAll('.section').forEach(function (section) {
+            var rect = section.getBoundingClientRect();
+            var viewportCenter = window.innerHeight / 2;
+            var sectionCenter = rect.top + rect.height / 2;
+            var distance = (sectionCenter - viewportCenter) / window.innerHeight;
+            var depth = Math.max(-18, Math.min(18, distance * -18));
+            section.style.setProperty('--section-depth', depth.toFixed(2) + 'px');
+        });
+    }
+
+    function updateActiveTimelineItem() {
+        if (!timelineItems.length) return;
+        var bestItem = null;
+        var bestDistance = Infinity;
+        timelineItems.forEach(function (item) {
+            var rect = item.getBoundingClientRect();
+            var distance = Math.abs((rect.top + rect.height / 2) - window.innerHeight * 0.48);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestItem = item;
+            }
+        });
+        timelineItems.forEach(function (item) {
+            item.classList.toggle('active', item === bestItem && bestDistance < window.innerHeight * 0.35);
+        });
+    }
+
     // ========== ANIMATED STAT COUNTERS ==========
     var statNumbers = document.querySelectorAll('.stat-number');
     var statsCounted = false;
@@ -401,24 +462,37 @@
 
     // ========== 3D TILT ON PROJECT CARDS ==========
     var projectCards = document.querySelectorAll('.project-card');
-    if (!isMobile) {
+    if (!isMobile && !prefersReducedMotion) {
         projectCards.forEach(function (card) {
+            var targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+            var hovering = false;
+            function tiltLoop() {
+                currentX += (targetX - currentX) * 0.14;
+                currentY += (targetY - currentY) * 0.14;
+                if (hovering) {
+                    card.style.transform = 'rotateX(' + currentX.toFixed(2) + 'deg) rotateY(' + currentY.toFixed(2) + 'deg) translateZ(16px) scale(1.015)';
+                    requestAnimationFrame(tiltLoop);
+                }
+            }
+            card.addEventListener('mouseenter', function () {
+                hovering = true;
+                requestAnimationFrame(tiltLoop);
+            });
             card.addEventListener('mousemove', function (e) {
                 var rect = card.getBoundingClientRect();
                 var x = e.clientX - rect.left;
                 var y = e.clientY - rect.top;
                 var centerX = rect.width / 2;
                 var centerY = rect.height / 2;
-                var rotateY = ((x - centerX) / centerX) * 8;
-                var rotateX = ((centerY - y) / centerY) * 8;
-                card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(10px)';
-                // Update spotlight position
-                var percentX = (x / rect.width) * 100;
-                var percentY = (y / rect.height) * 100;
-                card.style.setProperty('--mouse-x', percentX + '%');
-                card.style.setProperty('--mouse-y', percentY + '%');
+                targetY = ((x - centerX) / centerX) * 9;
+                targetX = ((centerY - y) / centerY) * 9;
+                card.style.setProperty('--mouse-x', ((x / rect.width) * 100) + '%');
+                card.style.setProperty('--mouse-y', ((y / rect.height) * 100) + '%');
             });
             card.addEventListener('mouseleave', function () {
+                hovering = false;
+                targetX = 0;
+                targetY = 0;
                 card.style.transform = '';
                 card.style.setProperty('--mouse-x', '50%');
                 card.style.setProperty('--mouse-y', '50%');
@@ -437,11 +511,17 @@
         if (scrollIndicator && window.scrollY > 200) {
             scrollIndicator.style.opacity = '0';
         }
-        // Update timeline drawing
+        // Update scroll-linked systems
+        updateScrollTelemetry();
         updateTimelineProgress();
-    });
+        updateSectionDepth();
+        updateActiveTimelineItem();
+    }, { passive: true });
     // Initial call
+    updateScrollTelemetry();
     updateTimelineProgress();
+    updateSectionDepth();
+    updateActiveTimelineItem();
 
     // Hamburger menu
     if (hamburger && navLinks) {
